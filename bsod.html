@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What does it mean?</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: sans-serif;
+      }
+
+      fieldset {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+      }
+
+      label {
+        display: block;
+      }
+
+      select {
+        margin-right: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>What does BSOD mean?</h1>
+    <svg width="400" height="400">
+      <rect width="400" height="400" fill="black" />
+      <text x="200" y="335" font-size="380" text-anchor="middle" opacity="0.75">
+        🖥️
+      </text>
+      <text x="200" y="260" font-size="190" text-anchor="middle">💀</text>
+      <text
+        x="200"
+        y="360"
+        font-size="20"
+        font-weight="bold"
+        text-anchor="middle"
+        fill="white"
+        stroke="black"
+      >
+        Black Screen of Death
+      </text>
+    </svg>
+
+    <fieldset>
+      <legend>Settings</legend>
+      <div>
+        <label for="b-color">B-color</label>
+        <select name="b-color" id="b-color">
+          <option value="black">Black</option>
+          <option value="blue">Blue</option>
+          <option value="beige">Beige</option>
+          <option value="bisque">Bisque</option>
+          <option value="blanchedalmond">Blanched almond</option>
+          <option value="blueviolet">Blue-violet</option>
+          <option value="brown">Brown</option>
+          <option value="burlywood">Burly wood</option>
+        </select>
+      </div>
+      <div>
+        <label for="s-noun">S-noun</label>
+        <select name="s-noun" id="s-noun">
+          <option value="🖥️">Screen (Desktop computer)</option>
+          <option value="🌊">Sea (Wave)</option>
+          <option value="🦥">Sloth</option>
+          <option value="🦨">Skunk</option>
+          <option value="🦢">Swan</option>
+          <option value="🐍">Snake</option>
+          <option value="🦭">Seal</option>
+          <option value="🦈">Shark</option>
+          <option value="🐚">Spiral shell</option>
+          <option value="🐌">Snail</option>
+          <option value="🕷️">Spider</option>
+          <option value="🕸️">Spiderweb</option>
+          <option value="🦂">Scorpion</option>
+          <option value="🌻">Sunflower</option>
+          <option value="☘️">Shamrock</option>
+          <option value="🕶️">Sunglasses</option>
+          <option value="🦺">Safety vest</option>
+          <option value="🧣">Scarf</option>
+          <option value="🧦">Socks</option>
+          <option value="🩳">Shorts</option>
+          <option value="🎷">Saxophone</option>
+          <option value="🛡️">Shield</option>
+          <option value="🪚">Saw (Carpentry saw)</option>
+          <option value="🪛">Screwdriver</option>
+          <option value="🧼">Soap</option>
+          <option value="🧽">Sponge</option>
+          <option value="🪨">Stone (Rock)</option>
+          <option value="☀️">Sun</option>
+          <option value="⭐">Star</option>
+          <option value="🌌">Sky (Milky way)</option>
+          <option value="🌪️">Storm (Tornado)</option>
+          <option value="❄️">Snow</option>
+          <option value="☃️">Snowman</option>
+          <option value="🥪">Sandwich</option>
+          <option value="🥗">Salad (Green salad)</option>
+          <option value="🦐">Shrimp</option>
+          <option value="🦑">Squid</option>
+        </select>
+      </div>
+      <div>
+        <label for="d-noun">D-noun</label>
+        <select name="d-noun" id="d-noun">
+          <option value="💀">Death (Skull)</option>
+          <option value="🐬">Dolphin</option>
+          <option value="🐕">Dog</option>
+          <option value="🕊️">Dove</option>
+          <option value="🦆">Duck</option>
+          <option value="🦤">Dodo</option>
+          <option value="🐉">Dragon</option>
+          <option value="🦕">Dino (Sauropod)</option>
+          <option value="🦖">Dino (T-Rex)</option>
+          <option value="👗">Dress</option>
+          <option value="💎">Diamond (Gem stone)</option>
+          <option value="🥁">Drum</option>
+          <option value="💵">Dollar banknote</option>
+          <option value="🗡️">Dagger</option>
+          <option value="💧">Droplet</option>
+          <option value="🎲">Die</option>
+          <option value="🍩">Doughnut</option>
+        </select>
+      </div>
+      <div>
+        <button id="randomizeButton">🎲</button>
+      </div>
+    </fieldset>
+    <script>
+      const selects = document.querySelectorAll("select");
+      selects.forEach((select) => {
+        select.addEventListener("change", redraw);
+      });
+      const randomizeButton = document.querySelector("#randomizeButton");
+      randomizeButton.addEventListener("click", () => {
+        randomize(0);
+        randomize(1);
+        randomize(2);
+        redraw();
+      });
+
+      function getNameAndValue(idx) {
+        const selected = selects[idx].selectedOptions[0];
+        return [selected.innerText.replace(/ \(.*\)$/g, ""), selected.value];
+      }
+
+      function redraw() {
+        const [bColorName, bColorValue] = getNameAndValue(0);
+        const [sNounName, sNounValue] = getNameAndValue(1);
+        const [dNounName, dNounValue] = getNameAndValue(2);
+
+        const completeName = `${bColorName} ${sNounName} of ${dNounName}`;
+
+        document.querySelector("svg>rect").setAttribute("fill", bColorValue);
+        document.querySelector("svg>text:nth-of-type(1)").textContent =
+          sNounValue;
+        document.querySelector("svg>text:nth-of-type(2)").textContent =
+          dNounValue;
+        document.querySelector("svg>text:nth-of-type(3)").textContent =
+          completeName;
+      }
+
+      function randomize(idx) {
+        const select = selects[idx];
+        select.selectedIndex = Math.floor(
+          Math.random() * select.options.length
+        );
+      }
+    </script>
+  </body>
+</html>
