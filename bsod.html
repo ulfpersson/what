@@ -19,8 +19,10 @@
 
       fieldset {
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
-        align-items: end;
+        width: 400px;
+        box-sizing: border-box;
       }
 
       label {
@@ -28,30 +30,18 @@
       }
 
       select {
-        margin-right: 1rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+
+      span {
+        font-size: small;
       }
     </style>
   </head>
   <body>
     <h1>What does BSOD mean?</h1>
-    <svg width="400" height="400">
-      <rect width="400" height="400" fill="black" />
-      <text x="200" y="335" font-size="380" text-anchor="middle" opacity="0.75">
-        🖥️
-      </text>
-      <text x="200" y="260" font-size="190" text-anchor="middle">💀</text>
-      <text
-        x="200"
-        y="360"
-        font-size="20"
-        font-weight="bold"
-        text-anchor="middle"
-        fill="white"
-        stroke="black"
-      >
-        Black Screen of Death
-      </text>
-    </svg>
+    <canvas id="cvs" width="400" height="400"></canvas>
 
     <fieldset>
       <legend>Settings</legend>
@@ -134,19 +124,39 @@
       </div>
       <div>
         <button id="randomizeButton">🎲</button>
+        <button id="copyButton">📋</button>
+        <span id="message"></span>
       </div>
     </fieldset>
+
     <script>
+      const cvs = document.getElementById("cvs");
+      const ctx = cvs.getContext("2d");
+
       const selects = document.querySelectorAll("select");
       selects.forEach((select) => {
         select.addEventListener("change", redraw);
       });
-      const randomizeButton = document.querySelector("#randomizeButton");
+
+      const randomizeButton = document.getElementById("randomizeButton");
       randomizeButton.addEventListener("click", () => {
         randomize(0);
         randomize(1);
         randomize(2);
         redraw();
+      });
+
+      const copyButton = document.getElementById("copyButton");
+      const msg = document.getElementById("message");
+      copyButton.addEventListener("click", () => {
+        cvs.toBlob(function (blob) {
+          const item = new ClipboardItem({ "image/png": blob });
+          navigator.clipboard.write([item]);
+          msg.innerText = "Copied to clipboard!";
+          setTimeout(() => {
+            msg.innerText = "";
+          }, 3000);
+        });
       });
 
       function getNameAndValue(idx) {
@@ -161,13 +171,32 @@
 
         const completeName = `${bColorName} ${sNounName} of ${dNounName}`;
 
-        document.querySelector("svg>rect").setAttribute("fill", bColorValue);
-        document.querySelector("svg>text:nth-of-type(1)").textContent =
-          sNounValue;
-        document.querySelector("svg>text:nth-of-type(2)").textContent =
-          dNounValue;
-        document.querySelector("svg>text:nth-of-type(3)").textContent =
-          completeName;
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+        ctx.fillStyle = bColorValue;
+        ctx.fillRect(0, 0, cvs.width, cvs.height);
+
+        ctx.font = `${0.95 * cvs.height}px serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.globalAlpha = 0.75;
+        ctx.fillText(sNounValue, 0.5 * cvs.width, 0.585 * cvs.height);
+
+        ctx.font = `${0.5 * cvs.height}px serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.globalAlpha = 1;
+        ctx.fillText(dNounValue, 0.5 * cvs.width, 0.525 * cvs.height);
+
+        ctx.font = `${0.05 * cvs.height}px sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.globalAlpha = 1;
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "black";
+        ctx.fillStyle = "white";
+        ctx.strokeText(completeName, 0.5 * cvs.width, 0.9 * cvs.height);
+        ctx.fillText(completeName, 0.5 * cvs.width, 0.9 * cvs.height);
       }
 
       function randomize(idx) {
@@ -176,6 +205,8 @@
           Math.random() * select.options.length
         );
       }
+
+      redraw();
     </script>
   </body>
 </html>
